@@ -37,7 +37,7 @@ type SimpleChaincode struct {
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("ex02 Init")
 	_, args := stub.GetFunctionAndParameters()
-	var A, B string    // Entities
+	var Visa, MasterCard string    // Entities
 	var Aval, Bval int // Asset holdings
 	var err error
 
@@ -46,12 +46,12 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	}
 
 	// Initialize the chaincode
-	A = args[0]
+	Visa = args[0]
 	Aval, err = strconv.Atoi(args[1])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding")
 	}
-	B = args[2]
+	MasterCard = args[2]
 	Bval, err = strconv.Atoi(args[3])
 	if err != nil {
 		return shim.Error("Expecting integer value for asset holding")
@@ -59,12 +59,12 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
 
 	// Write the state to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	err = stub.PutState(Visa, []byte(strconv.Itoa(Aval)))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	err = stub.PutState(MasterCard, []byte(strconv.Itoa(Bval)))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
@@ -91,7 +91,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 // Transaction makes payment of X units from A to B
 func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) pb.Response {
-	var A, B string    // Entities
+	var Visa, MasterCard string    // Entities
 	var Aval, Bval int // Asset holdings
 	var X int          // Transaction value
 	var err error
@@ -100,12 +100,12 @@ func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) 
 		return shim.Error("Incorrect number of arguments. Expecting 3")
 	}
 
-	A = args[0]
-	B = args[1]
+	Visa = args[0]
+	MasterCard = args[1]
 
 	// Get the state from the ledger
 	// TODO: will be nice to have a GetAllState call to ledger
-	Avalbytes, err := stub.GetState(A)
+	Avalbytes, err := stub.GetState(Visa)
 	if err != nil {
 		return shim.Error("Failed to get state")
 	}
@@ -114,7 +114,7 @@ func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) 
 	}
 	Aval, _ = strconv.Atoi(string(Avalbytes))
 
-	Bvalbytes, err := stub.GetState(B)
+	Bvalbytes, err := stub.GetState(MasterCard)
 	if err != nil {
 		return shim.Error("Failed to get state")
 	}
@@ -133,12 +133,12 @@ func (t *SimpleChaincode) move(stub shim.ChaincodeStubInterface, args []string) 
 	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
 
 	// Write the state back to the ledger
-	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	err = stub.PutState(Visa, []byte(strconv.Itoa(Aval)))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
 
-	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	err = stub.PutState(MasterCard, []byte(strconv.Itoa(Bval)))
 	if err != nil {
 		return shim.Error(err.Error())
 	}
