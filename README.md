@@ -23,29 +23,29 @@ Most of the plumbing work is taken care of by this starter.
 Network consortium consists of:
 
 - Orderer organization `example.com`
-- Peer organization org1 `a` 
-- Peer organization org2 `b` 
-- Peer organization org3 `c`
+- Peer organization org1 `visa` 
+- Peer organization org2 `mastercard` 
+- Peer organization org3 `pwc`
 
 They transact with each other on the following channels:
 
 - `common` involving all members and with chaincode `reference` deployed
 - bilateral confidential channels between pairs of members with chaincode `relationship` deployed to them
-  - `a-b`
-  - `a-c`
-  - `b-c`
+  - `visa-mastercard`
+  - `visa-pwc`
+  - `mastercard-pwc`
 
 Both chaincodes are copies of [chaincode_example02](https://github.com/hyperledger/fabric/tree/release/examples/chaincode/go/chaincode_example02).
 Replace these sources with your own.
 
 Each organization starts several docker containers:
 
-- **peer0** (ex.: `peer0.a.example.com`) with the anchor [peer](https://github.com/hyperledger/fabric/tree/release/peer) runtime
-- **peer1** `peer1.a.example.com` with the secondary peer
-- **ca** `ca.a.example.com` with certificate authority server [fabri-ca](https://github.com/hyperledger/fabric-ca)
-- **api** `api.a.example.com` with [fabric-rest](https://github.com/Altoros/fabric-rest) API server
-- **www** `www.a.example.com` with a simple http server to serve members' certificate files during artifacts generation and setup
-- **cli** `cli.a.example.com` with tools to run commands during setup
+- **peer0** (ex.: `peer0.visa.example.com`) with the anchor [peer](https://github.com/hyperledger/fabric/tree/release/peer) runtime
+- **peer1** `peer1.visa.example.com` with the secondary peer
+- **ca** `ca.visa.example.com` with certificate authority server [fabri-ca](https://github.com/hyperledger/fabric-ca)
+- **api** `api.visa.example.com` with [fabric-rest](https://github.com/Altoros/fabric-rest) API server
+- **www** `www.visa.example.com` with a simple http server to serve members' certificate files during artifacts generation and setup
+- **cli** `cli.visa.example.com` with tools to run commands during setup
 
 ## Local deployment
 
@@ -79,8 +79,8 @@ Tail logs of each member's docker containers by passing its name as organization
 ./network.sh -m logs -m example.com
 
 # members
-./network.sh -m logs -m a
-./network.sh -m logs -m b
+./network.sh -m logs -m visa
+./network.sh -m logs -m mastercard
 ```
 Stop all:
 ```bash
@@ -109,13 +109,13 @@ The setup process takes several steps whose order is important.
 Each member generates artifacts on their respective hosts (can be done in parallel):
 ```bash
 # organization a on their host
-./network.sh -m generate-peer -o a
+./network.sh -m generate-peer -o visa
 
 # organization b on their host
-./network.sh -m generate-peer -o b
+./network.sh -m generate-peer -o mastercard
 
 # organization c on their host
-./network.sh -m generate-peer -o c
+./network.sh -m generate-peer -o pwc
 ```
 
 After certificates are generated each script starts a `www` docker instance to serve them to other members: the orderer
